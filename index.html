@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parshant Balwaria - GIS Software Engineer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --cyan: #06b6d4;
+            --emerald: #10b981;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --dark-card: #16213e;
+            --text: #f1f5f9;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            animation: gradientMove 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, 50px) rotate(5deg); }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 1.2rem 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--cyan), var(--accent));
+            background-size: 200% 200%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--cyan));
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: var(--cyan);
+        }
+
+        /* Hero Section - FIXED */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 6rem;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text) 0%, var(--cyan) 50%, var(--primary) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-text .highlight {
+            display: block;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-dim);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Hero Visual - FIXED */
+        .hero-visual {
+            position: relative;
+            animation: fadeInRight 1s ease-out 0.3s both;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 30px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .map-image {
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 70% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
+                linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .map-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.1) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+            animation: mapFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes mapFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Floating Cards - Freefall Animation System */
+        .floating-card {
+            position: absolute;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-card:hover {
+            transform: scale(1.05);
+            z-index: 20;
+        }
+
+        .floating-card-1 {
+            animation: freefall1 35s infinite ease-in-out;
+        }
+
+        .floating-card-2 {
+            animation: freefall2 40s infinite ease-in-out;
+        }
+
+        .floating-card-3 {
+            animation: freefall3 38s infinite ease-in-out;
+        }
+
+        .floating-card-4 {
+            animation: freefall4 42s infinite ease-in-out;
+        }
+
+        .floating-card-5 {
+            animation: freefall5 45s infinite ease-in-out;
+        }
+
+        .floating-card-6 {
+            animation: freefall6 37s infinite ease-in-out;
+        }
+
+        .floating-card-7 {
+            animation: freefall7 41s infinite ease-in-out;
+        }
+
+        @keyframes freefall1 {
+            0% { top: 10%; left: 15%; transform: rotate(0deg); }
+            25% { top: 65%; left: 70%; transform: rotate(8deg) translateY(-10px); }
+            50% { top: 45%; left: 20%; transform: rotate(-5deg) translateY(-15px); }
+            75% { top: 25%; left: 75%; transform: rotate(3deg) translateY(-10px); }
+            100% { top: 10%; left: 15%; transform: rotate(0deg); }
+        }
+
+        @keyframes freefall2 {
+            0% { top: 75%; left: 75%; transform: rotate(0deg); }
+            25% { top: 20%; left: 25%; transform: rotate(-6deg) translateY(-12px); }
+            50% { top: 60%; left: 65%; transform: rotate(4deg) translateY(-15px); }
+            75% { top: 40%; left: 10%; transform: rotate(-3deg) translateY(-10px); }
+            100% { top: 75%; left: 75%; transform: rotate(0deg); }
+        }
+
+        @keyframes freefall3 {
+            0% { top: 50%; left: 80%; transform: rotate(5deg); }
+            20% { top: 15%; left: 55%; transform: rotate(10deg) translateY(-12px); }
+            40% { top: 70%; left: 25%; transform: rotate(-8deg) translateY(-15px); }
+            60% { top: 35%; left: 68%; transform: rotate(6deg) translateY(-10px); }
+            80% { top: 55%; left: 40%; transform: rotate(-4deg) translateY(-13px); }
+            100% { top: 50%; left: 80%; transform: rotate(5deg); }
+        }
+
+        @keyframes freefall4 {
+            0% { top: 25%; left: 12%; transform: rotate(0deg); }
+            33% { top: 58%; left: 72%; transform: rotate(7deg) translateY(-14px); }
+            66% { top: 78%; left: 38%; transform: rotate(-5deg) translateY(-11px); }
+            100% { top: 25%; left: 12%; transform: rotate(0deg); }
+        }
+
+        @keyframes freefall5 {
+            0% { top: 65%; left: 8%; transform: rotate(-4deg); }
+            30% { top: 18%; left: 78%; transform: rotate(-10deg) translateY(-13px); }
+            60% { top: 52%; left: 48%; transform: rotate(6deg) translateY(-15px); }
+            90% { top: 82%; left: 68%; transform: rotate(-3deg) translateY(-10px); }
+            100% { top: 65%; left: 8%; transform: rotate(-4deg); }
+        }
+
+        @keyframes freefall6 {
+            0% { top: 38%; left: 68%; transform: rotate(3deg); }
+            25% { top: 72%; left: 28%; transform: rotate(9deg) translateY(-12px); }
+            50% { top: 12%; left: 52%; transform: rotate(-7deg) translateY(-15px); }
+            75% { top: 48%; left: 85%; transform: rotate(5deg) translateY(-11px); }
+            100% { top: 38%; left: 68%; transform: rotate(3deg); }
+        }
+
+        @keyframes freefall7 {
+            0% { top: 15%; left: 42%; transform: rotate(6deg); }
+            40% { top: 80%; left: 15%; transform: rotate(-8deg) translateY(-14px); }
+            70% { top: 30%; left: 82%; transform: rotate(4deg) translateY(-12px); }
+            100% { top: 15%; left: 42%; transform: rotate(6deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Stats Section - FIXED - Added backdrop blur */
+        .stats {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 4rem auto 5rem;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyan), var(--primary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Experience Section - NEW */
+        .experience {
+            position: relative;
+            z-index: 2;
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text), var(--cyan));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            color: var(--text-dim);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--cyan));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding: 2rem;
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            margin: 0 2rem;
+            transition: all 0.4s;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+            border-color: var(--primary);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--cyan));
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+            z-index: 2;
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--cyan);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .timeline-company {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .timeline-description {
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .role-track {
+            margin-top: 1.5rem;
+            border-left: 2px dashed rgba(99, 102, 241, 0.3);
+            padding-left: 1.5rem;
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .role-track-item {
+            position: relative;
+        }
+
+        .role-track-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--cyan));
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .role-dates {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 0.3rem;
+        }
+
+        .role-details {
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* Projects Section */
+        .projects {
+            position: relative;
+            z-index: 1;
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .project-card {
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 60px rgba(99, 102, 241, 0.4);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:nth-child(2) .project-image {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .project-card:nth-child(3) .project-image {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .project-card:nth-child(4) .project-image {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .project-card:nth-child(5) .project-image {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .project-card:nth-child(6) .project-image {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+
+        .project-card:hover .project-image::before {
+            background: rgba(0, 0, 0, 0);
+        }
+
+        .project-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            opacity: 0.3;
+            transition: all 0.5s;
+        }
+
+        .project-card:hover .project-icon {
+            transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
+            opacity: 0.5;
+        }
+
+        .project-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--cyan);
+        }
+
+        .project-description {
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+
+        .tech-tag {
+            background: rgba(99, 102, 241, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--cyan);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            transition: all 0.3s;
+        }
+
+        .tech-tag:hover {
+            background: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Services Section - NEW */
+        .services {
+            position: relative;
+            z-index: 1;
+            background: rgba(26, 26, 46, 0.3);
+            padding: 5rem 2rem;
+        }
+
+        .services-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .service-card {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.4s;
+            text-align: center;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+        }
+
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--cyan);
+        }
+
+        .service-description {
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* Skills Section */
+        .skills {
+            position: relative;
+            z-index: 1;
+            padding: 5rem 2rem;
+        }
+
+        .skills-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .skill-category {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--cyan), var(--accent));
+            background-size: 200% 100%;
+            animation: gradientSlide 3s ease infinite;
+        }
+
+        @keyframes gradientSlide {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .skill-category:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+        }
+
+        .skill-category h3 {
+            color: var(--cyan);
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .skill-item {
+            margin-bottom: 2rem;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--cyan));
+            border-radius: 10px;
+            position: relative;
+            transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Testimonials Section - NEW */
+        .testimonials {
+            position: relative;
+            z-index: 1;
+            background: rgba(26, 26, 46, 0.3);
+            padding: 5rem 2rem;
+        }
+
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonials-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .testimonial-card {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.4s;
+            position: relative;
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-size: 5rem;
+            color: rgba(99, 102, 241, 0.2);
+            font-family: serif;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+        }
+
+        .testimonial-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-text {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .testimonial-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-info h4 {
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .testimonial-info p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .testimonial-source {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--cyan);
+            margin-top: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-source:hover {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Contact Section */
+        .contact {
+            position: relative;
+            z-index: 1;
+            padding: 5rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-card {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 4rem 3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+            background: rgba(99, 102, 241, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--text);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 150px;
+        }
+
+        .contact-link:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            transition: transform 0.3s;
+        }
+
+        .contact-link:hover .contact-icon {
+            transform: scale(1.2);
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            background: rgba(26, 26, 46, 0.5);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero {
+                padding: 6rem 1rem 4rem;
+            }
+
+            .cta-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .map-container {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .floating-card {
+                font-size: 0.75rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .floating-card-4,
+            .floating-card-5,
+            .floating-card-6,
+            .floating-card-7 {
+                display: none;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .project-grid,
+            .skills-grid,
+            .services-grid,
+            .testimonials-grid {
+                gap: 1.5rem;
+            }
+
+            .testimonial-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .testimonial-content {
+                order: 2;
+            }
+
+            .testimonial-author {
+                order: 1;
+                margin-bottom: 1.5rem;
+            }
+
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                flex-direction: row !important;
+                padding-left: 60px;
+            }
+
+            .timeline-content {
+                margin: 0;
+            }
+
+            .timeline-dot {
+                left: 30px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            nav ul {
+                display: none;
+            }
+
+            .hero {
+                padding: 5rem 1rem 3rem;
+            }
+
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-text p {
+                font-size: 0.95rem;
+            }
+
+            .map-container {
+                max-width: 320px;
+                padding: 1.5rem;
+            }
+
+            .floating-card {
+                font-size: 0.7rem;
+                padding: 0.5rem 0.8rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .section-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .timeline-item {
+                padding-left: 50px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-dot {
+                left: 20px;
+                width: 12px;
+                height: 12px;
+            }
+
+            .role-track {
+                padding-left: 1rem;
+            }
+
+            .role-track-item::before {
+                left: -14px;
+                width: 8px;
+                height: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-gradient"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">parshant.dev</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>
+                    Hi, I'm Parshant Balwaria
+                    <span class="highlight">GIS Software Engineer</span>
+                </h1>
+                <p>GIS engineer with 2+ years delivering one flagship enterprise platform and 10+ specialized automation tools across Ramboll and MapMyIndia teams. I design cloud-ready GIS workflows, craft open-source tooling, and turn complex spatial datasets into usable products.</p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/Parshantbalwaria129" class="btn btn-primary" target="_blank" rel="noopener">Explore GitHub</a>
+                    <a href="#contact" class="btn btn-secondary">Start a Project</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="map-container">
+                    <div class="map-overlay"></div>
+                    <div class="map-image">🗺️</div>
+                    <div class="floating-card floating-card-1">
+                        <strong>Ramboll</strong><br>
+                        <small style="color: var(--text-dim);">2025 - Present</small>
+                    </div>
+                    <div class="floating-card floating-card-2">
+                        <strong>MapMyIndia</strong><br>
+                        <small style="color: var(--text-dim);">2022 - 2025</small>
+                    </div>
+                    <div class="floating-card floating-card-3">
+                        <strong>2+ Years</strong><br>
+                        <small style="color: var(--text-dim);">GIS Software Engineering</small>
+                    </div>
+                    <div class="floating-card floating-card-4">
+                        <strong>Multi Teams</strong><br>
+                        <small style="color: var(--text-dim);">Cross-Functional Support</small>
+                    </div>
+                    <div class="floating-card floating-card-5">
+                        <strong>2 Recommendations</strong><br>
+                        <small style="color: var(--text-dim);">LinkedIn & Freelancer</small>
+                    </div>
+                    <div class="floating-card floating-card-6">
+                        <strong>10+ Deployments</strong><br>
+                        <small style="color: var(--text-dim);">Production Systems</small>
+                    </div>
+                    <div class="floating-card floating-card-7">
+                        <strong>B.Tech 2023</strong><br>
+                        <small style="color: var(--text-dim);">Kurukshetra University</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spacer to push content down -->
+    <div style="height: 20vh; background: var(--bg); position: relative; z-index: 2;"></div>
+
+    <!-- Experience Section -->
+    <section class="experience" id="experience">
+        <div class="section-header">
+            <h2 class="section-title">Professional Journey</h2>
+            <p class="section-subtitle">Building expertise in geospatial technology and software development</p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">Oct 2025 - Present</div>
+                    <h3 class="timeline-title">Assistant Digital Product Engineer</h3>
+                    <div class="timeline-company">Ramboll</div>
+                    <p class="timeline-description">
+                        Rapidly embedded into Ramboll's digital delivery team to prototype cloud-ready GIS experiences. Automating data flows between ArcGIS, PostGIS, and Python so infrastructure stakeholders receive reliable spatial insights within existing product ecosystems.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">Nov 2023 - Sep 2025</div>
+                    <h3 class="timeline-title">Full-Time GIS & Product Engineering</h3>
+                    <div class="timeline-company">MapMyIndia</div>
+                    <p class="timeline-description">
+                        Led national-scale mapping services from full-time engineer to lead role. Delivered a flagship spatial data platform, drove 10+ automation launches, and supported multiple business units through platform migrations and quality initiatives.
+                    </p>
+
+                    <div class="role-track">
+                        <div class="role-track-item">
+                            <span class="role-badge">Promotion · Nov 2024</span>
+                            <div class="role-dates">Software Engineer III · Nov 2024 - Sep 2025</div>
+                            <div class="role-details">
+                                Directed upgrades for national-scale mapping services, owning internal GIS APIs, telemetry, and deployment automation. Mentored cross-functional teams adopting the flagship platform across automotive, logistics, and public sector programs.
+                            </div>
+                        </div>
+                        <div class="role-track-item">
+                            <span class="role-badge">Growth Role</span>
+                            <div class="role-dates">Software Associate II · Nov 2023 - Jan 2025</div>
+                            <div class="role-details">
+                                Built and launched 10+ targeted GIS automations that improved data freshness and quality checks. Partnered with product owners to translate field requirements into reusable Python, PostGIS, and React components.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">Aug 2022 - Sep 2022</div>
+                    <h3 class="timeline-title">Software Engineer Trainee</h3>
+                    <div class="timeline-company">MapMyIndia · Internship</div>
+                    <p class="timeline-description">
+                        Contributed to map data QA workflows using Python and spatial SQL, creating prototype automation scripts that reduced manual editing time and informed the roadmap for production tools.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="services-container">
+            <div class="section-header">
+                <h2 class="section-title">How I Collaborate</h2>
+                <p class="section-subtitle">Focus areas where I contribute to cross-team initiatives, open-source efforts, and knowledge-sharing outside my core role.</p>
+            </div>
+
+            <p style="color: var(--text-dim); text-align: center; max-width: 820px; margin: 0 auto 3rem; font-size: 0.95rem;">
+                Note: I am a full-time GIS Software Engineer at Ramboll. The capabilities below reflect how I support internal programs and open-source communities—not an offer of independent consulting services.
+            </p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🗺️</div>
+                    <h3 class="service-title">GIS Application Development</h3>
+                    <p class="service-description">Custom geospatial applications built with modern frameworks, interactive maps, and real-time data visualization capabilities.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3 class="service-title">Spatial Data Management</h3>
+                    <p class="service-description">Enterprise-level data management solutions with PostgreSQL/PostGIS, automated validation, and ETL pipelines.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3 class="service-title">GIS Automation Tools</h3>
+                    <p class="service-description">Custom PyQGIS and ArcPy scripts for automating spatial analysis, geoprocessing workflows, and batch operations.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">💻</div>
+                    <h3 class="service-title">Full-Stack Web Engineering</h3>
+                    <p class="service-description">Designing responsive web applications with Django/FastAPI backends and React/Vue frontends, blending GIS data layers with modern product UX.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3 class="service-title">Web Mapping Solutions</h3>
+                    <p class="service-description">Interactive web maps using Leaflet, Mapbox GL, with custom styling, spatial queries, and data filtering.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3 class="service-title">Spatial Analysis</h3>
+                    <p class="service-description">Advanced spatial analytics, buffer analysis, network analysis, heat maps, and location intelligence solutions.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">🔌</div>
+                    <h3 class="service-title">Geospatial APIs</h3>
+                    <p class="service-description">RESTful API development for geocoding, routing, spatial queries, and location-based services using FastAPI/Django.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="section-header">
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="section-subtitle">Snapshots from one flagship enterprise deployment and 10+ specialized GIS tools delivered across teams.</p>
+        </div>
+        
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">🎥</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Video Subtitle Website</h3>
+                    <p class="project-description">Full-stack platform for managing multilingual subtitles with live editing, project history, and secure token-based workflows for content teams.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Django</span>
+                        <span class="tech-tag">DRF</span>
+                        <span class="tech-tag">Vue.js 3</span>
+                        <span class="tech-tag">MySQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">📞</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Caller API</h3>
+                    <p class="project-description">Token-secured API service for validating and managing global phone metadata with audit trails, rate limiting, and admin dashboards.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Django REST</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">JWT</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">📊</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">QGIS Plugin Toolkit</h3>
+                    <p class="project-description">Suite of QGIS plugins that automate repetitive cartography tasks, enforce data standards, and accelerate map production for field teams.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">QGIS</span>
+                        <span class="tech-tag">PyQGIS</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Automation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">🛰️</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Offline MQTT Messaging</h3>
+                    <p class="project-description">Lightweight MQTT-based messaging workflow that keeps remote GIS operators in sync in low-connectivity environments.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">MQTT</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Edge</span>
+                        <span class="tech-tag">Automation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">🔧</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">MapStore + QGIS Server Integration</h3>
+                    <p class="project-description">Enterprise deployment blueprint combining MapStore, QGIS Server, and PostGIS to deliver scalable self-service mapping for stakeholders.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">MapStore</span>
+                        <span class="tech-tag">QGIS Server</span>
+                        <span class="tech-tag">PostGIS</span>
+                        <span class="tech-tag">Docker</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <div class="project-icon">🎯</div>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Enterprise Spatial Data Platform</h3>
+                    <p class="project-description">Confidential data-management backbone that powers routing, geocoding, and analytics services for a national-scale location intelligence provider.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">PostGIS</span>
+                        <span class="tech-tag">FastAPI</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">CI/CD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills" id="skills">
+        <div class="skills-container">
+            <div class="section-header">
+                <h2 class="section-title">Technical Arsenal</h2>
+                <p class="section-subtitle">Comprehensive expertise across GIS, backend, and frontend technologies</p>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>🗺️ GIS & Spatial Technologies</h3>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>QGIS / PyQGIS</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="95%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>ArcGIS / ArcPy</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>PostGIS</span>
+                            <span>92%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="92%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Spatial Analysis</span>
+                            <span>88%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="88%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>⚙️ Backend Development</h3>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Python</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="95%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>FastAPI</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Django / Flask</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="85%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>PostgreSQL / MySQL</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="90%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>🎨 Frontend Development</h3>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>React.js</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="85%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>JavaScript</span>
+                            <span>88%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="88%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>HTML / CSS</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Leaflet / Mapbox</span>
+                            <span>87%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 0%" data-width="87%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="testimonials-container">
+            <div class="section-header">
+                <h2 class="section-title">Recommendations</h2>
+                <p class="section-subtitle">What colleagues and clients say about working with me</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "I've had the privilege of working with Parshant as his senior, a true developer at heart, whose passion for coding shines through in every project he tackles. His dedication to code and his knack for building robust solutions make him a standout team member. Parshant approaches challenges with a problem-solving mindset, always eager to dive into the details and deliver results that exceed expectations. His love for coding isn't just a skill—it's a driving force that fuels his growth and inspires those around him. I'd highly recommend Parshant to any team looking for a talented, committed developer with a builder's spirit!"
+                        </p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">AR</div>
+                        <div class="testimonial-info">
+                            <h4>Aman Ranjan</h4>
+                            <p>Software Engineer<br>MapMyIndia</p>
+                            <a href="https://www.linkedin.com/in/parshant-balwaria-b930a21b9/" target="_blank" class="testimonial-source">View on LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            "He communicated effectively and demonstrated exceptional commitment to achieving outstanding results. I am truly grateful to have had the opportunity to work with him."
+                        </p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div class="testimonial-info">
+                            <h4>Sebastián M.</h4>
+                            <p>System Administrator<br>Mendoza, Argentina</p>
+                            <a href="https://www.freelancer.com/u/parshantbalwaria?review_context_id=39139501&review_type=project&reviewee_role=freelancer&sb=t" target="_blank" class="testimonial-source">View on Freelancer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-card">
+            <h2 class="section-title">Let's Build Something Amazing</h2>
+            <p class="section-subtitle">Available for freelance GIS projects, spatial analysis, and custom development</p>
+            
+            <div class="contact-links">
+                <a href="mailto:parshantbalwaria@gmail.com" class="contact-link">
+                    <span class="contact-icon">📧</span>
+                    <span>Email</span>
+                </a>
+                <a href="https://www.linkedin.com/in/parshant-balwaria-b930a21b9/" class="contact-link" target="_blank" rel="noopener">
+                    <span class="contact-icon">💼</span>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/Parshantbalwaria129" class="contact-link" target="_blank" rel="noopener">
+                    <span class="contact-icon">💻</span>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Parshant Balwaria. GIS Software Engineer | Python • PostGIS • QGIS</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Building open-source geospatial solutions that scale</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer for skill bars animation
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBars = entry.target.querySelectorAll('.skill-progress');
+                    progressBars.forEach(bar => {
+                        const width = bar.getAttribute('data-width');
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                    skillObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.skill-category').forEach(category => {
+            skillObserver.observe(category);
+        });
+
+        // Fade in animation on scroll
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.project-card, .service-card, .testimonial-card, .timeline-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeObserver.observe(el);
+        });
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                hero.style.opacity = 1 - (scrolled / window.innerHeight) * 0.5;
+            }
+        });
+
+        // Active navigation highlight
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.color = '';
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.style.color = 'var(--cyan)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
