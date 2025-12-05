@@ -4,7 +4,7 @@ Personal portfolio website showcasing my work as a GIS Software Engineer with 2+
 
 ## 🚀 Live Demo
 
-[View Portfolio](https://parshantbalwaria129.github.io/Portfolio/)
+[View Portfolio](https://parshantbalwaria129.github.io/portfolio/)
 
 ## 🛠️ Built With
 
