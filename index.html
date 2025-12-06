@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f310.png" type="image/png">
     <title>Parshant Balwaria - GIS Software Engineer</title>
     <style>
         * {
@@ -1103,7 +1104,7 @@
             position: relative;
             z-index: 1;
             padding: 5rem 2rem;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             text-align: center;
         }
@@ -1910,18 +1911,24 @@
         });
 
         // Active navigation highlight
-        window.addEventListener('scroll', () => {
+        function updateActiveNav() {
             const sections = document.querySelectorAll('section[id]');
             const navLinks = document.querySelectorAll('nav a[href^="#"]');
-            
             let current = '';
+
+            // Find the section most visible in viewport (last one that started scrolling into view)
+            let lastVisibleSection = null;
             sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (pageYOffset >= sectionTop - 200) {
-                    current = section.getAttribute('id');
+                const rect = section.getBoundingClientRect();
+                // If section top is above viewport bottom, it's at least partially visible
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    lastVisibleSection = section.getAttribute('id');
                 }
             });
+            
+            if (lastVisibleSection) {
+                current = lastVisibleSection;
+            }
 
             navLinks.forEach(link => {
                 link.style.color = '';
@@ -1929,7 +1936,11 @@
                     link.style.color = 'var(--cyan)';
                 }
             });
-        });
+        }
+
+        window.addEventListener('scroll', updateActiveNav);
+        window.addEventListener('resize', updateActiveNav);
+        document.addEventListener('DOMContentLoaded', updateActiveNav);
     </script>
 </body>
 </html>
