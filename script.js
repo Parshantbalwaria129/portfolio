@@ -277,6 +277,32 @@
     gc.addEventListener('touchmove', function (e) { e.preventDefault(); onMove(e); }, { passive: false });
     gc.addEventListener('touchend', onUp);
 
+    // --- Testimonial carousel dots ---
+    var testGrid = document.querySelector('.test-grid');
+    var testDots = document.querySelectorAll('.test-dot');
+    if (testGrid && testDots.length) {
+        testGrid.addEventListener('scroll', function () {
+            var cards = testGrid.querySelectorAll('.test-card');
+            var scrollLeft = testGrid.scrollLeft;
+            var cardWidth = cards[0].offsetWidth + 12;
+            var idx = Math.round(scrollLeft / cardWidth);
+            idx = Math.max(0, Math.min(idx, testDots.length - 1));
+            testDots.forEach(function (d, i) {
+                d.classList.toggle('active', i === idx);
+            });
+        }, { passive: true });
+    }
+
+    // --- Mobile project card expand/collapse ---
+    if (window.matchMedia('(max-width: 480px)').matches) {
+        document.querySelectorAll('.proj-card').forEach(function (card) {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('.proj-link')) return;
+                card.classList.toggle('expanded');
+            });
+        });
+    }
+
     // --- Smooth scroll ---
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
